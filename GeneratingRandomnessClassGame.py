@@ -18,49 +18,54 @@ class GenerateRandomness:
     def menu(self):
         print("Please give AI some data to learn...")
         print("The current data length is", len(self.string_for_learning), ",", 100-len(self.string_for_learning),
-              "symbols left")
-        GenerateRandomness.get_data_from_user(self)
+              "symbols left")  # we're counting the current string length and the number of symbols that left to print
+        GenerateRandomness.get_data_from_user(self)  # getting string from user (user input)
         print("You have $" + str(self.balance) + "." +
               " Every time the system successfully predicts your next press, you lose $1.")
         print('Otherwise, you earn $1. Print "enough" to leave the game.' + " Let's go!\n")
-        GenerateRandomness.count_triads(self)
-        GenerateRandomness.prediction(self)
+        GenerateRandomness.count_triads(self)  # preparing data for prediction using users data
+        GenerateRandomness.prediction(self)  # generating prediction and almost infinite game
 
     def get_data_from_user(self):
         while len(self.string_for_learning) < 100:
-            input_string = input("Print a random string containing 0 or 1:\n\n")
-            self.string_for_learning += GenerateRandomness.cleaning_string(input_string)
+            input_string = input("Print a random string containing 0 or 1:\n\n")  # get data to teach our AI from user
+            self.string_for_learning += GenerateRandomness.cleaning_string(input_string)  # concatinating full string
+            # to learn
             if len(self.string_for_learning) < 100:
                 print("The current data length is", len(self.string_for_learning), ",",
                       100-len(self.string_for_learning), "symbols left")
         print("Final data string:", self.string_for_learning, sep="\n", end="\n\n")
 
     def balance_counting(self):
-        print("Your balance is now $" + str(self.balance), end="\n\n")
+        print("Your balance is now $" + str(self.balance), end="\n\n")  # showing the current balance to user
 
     @staticmethod
-    def cleaning_string(string):
-        cleaned_string = ""
+    def cleaning_string(string):  # preprocessing, preparing our data for AI
+        cleaned_string = ""  # result prepared string
         for i in string:
-            if (i == "0") or (i == "1"):
+            if (i == "0") or (i == "1"):  # using only "0" and "1" symbols from the input string
                 cleaned_string += i
+        if len(cleaned_string) <= 3:
+            cleaned_string = ""
         return cleaned_string
-
-    def count_triads(self):
+            
+    def count_triads(self):  # using "triads" system to make data for future prediction
         for i in range(len(self.string_for_learning)-3):
-            k = self.string_for_learning[i:i+3]
+            k = self.string_for_learning[i:i+3]  # take triad
+            """making data for the future predictions using existing empty dictionary"""
             if self.string_for_learning[i+3] == "0":
                 self.data_dictionary[k][0] += 1
             elif self.string_for_learning[i+3] == "1":
                 self.data_dictionary[k][1] += 1
 
-    def beautiful_dict_print(self):
+    """ONLY FOR DEVELOPERS"""
+    def beautiful_dict_print(self):  # if you want to see the data (the dictionary with data), use this function
         for i, j in self.data_dictionary.items():
-            print(str(i)+":", str(j[0])+","+str(j[1]))
+            print(str(i) + ":", str(j[0]) + "," + str(j[1]))
 
-    def prediction(self):
+    def prediction(self):  # prediction + game
         while True:
-            test_string = input("Print a random string containing 0 or 1:\n")
+            test_string = input("Print a random string containing 0 or 1:\n")  # test string from user
             if test_string == "enough":
                 print("Game over!", end="")
                 break
