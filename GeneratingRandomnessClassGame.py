@@ -91,30 +91,36 @@ class GenerateRandomness:
                 self.predicted_string += str(random.randint(0, 1))
 
     def playing_game(self):  # (un)infinite game
-        while True:
+        while True:  # infinite game (BREAKPOINTS: 1) "enough" input 2) balance <= 0)
             test_string = input("Print a random string containing 0 or 1:\n")  # test string from user
-            if test_string == "enough":
+            if test_string == "enough":  # check if test_string is breakpoint
                 print("Game over!", end="")
                 break
             test_string = GenerateRandomness.cleaning_string(test_string)  # cleaning string that must contain only
             # "0" and "1" from other symbols
-            if len(test_string) != 0:
+            if len(test_string) != 0:  # skip all test strings which length is 0 (containing only "0" and "1" symbols
+                # ("cleaned" strings)
                 self.test_string = GenerateRandomness.cleaning_string(test_string)
             else:
                 print()
                 continue
             GenerateRandomness.prediction(self)  # making prediction for the test string
-            guessed_correctly = 0
+            guessed_correctly = 0  # counter correctly guessed symbols from our AI
             for i in range(3, len(self.test_string)):
                 if self.test_string[i] == self.predicted_string[i]:
                     guessed_correctly += 1
-            self.balance -= guessed_correctly
-            self.balance += ((len(self.test_string) - 3) - guessed_correctly)
+            self.balance -= guessed_correctly  # -1$ from balance for each guessed symbol
+            self.balance += ((len(self.test_string) - 3) - guessed_correctly)  # +1$ to balance from each 
+            # unguessed symbol
+            """result string with information about this prediction"""
             self.result_string = "Computer guessed right " + str(guessed_correctly) + " out of " + \
                                  str(len(self.test_string) - 3) + " symbols " + "(" + \
                                  str(round(guessed_correctly / (len(self.test_string) - 3) * 100, 2)) + " %)"
-            print("prediction:", self.predicted_string + "\n", self.result_string, sep="\n")
-            GenerateRandomness.balance_counting(self)
+            print("prediction:", self.predicted_string + "\n", self.result_string, sep="\n")  # printing the result
+            GenerateRandomness.balance_counting(self)  # printing the current balance
+            if self.balance <= 0:  # balance check
+                print("Game over!", end="")
+                break
 
 
 if __name__ == "__main__":
